@@ -1,15 +1,31 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer } from '@react-navigation/native';
+const Stack = createNativeStackNavigator();
 
-class WhatsThatApp extends Component {
+import LoginScreen from './components/login';
+import SignupScreen from './components/signup';
+
+export default class App extends Component {
+
   render(){
-
     return (
-        <View>
-          <Text>Hello World!</Text>
-        </View>
-    );
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Login">
+          <Stack.Screen name="Login" component={LoginScreen}/>
+          <Stack.Screen name="Signup" component={SignupScreen}/>
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
   }
 }
 
-export default WhatsThatApp
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
