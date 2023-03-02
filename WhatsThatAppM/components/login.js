@@ -18,6 +18,34 @@ export default class LoginScreen extends Component {
         this._onPressButton = this._onPressButton.bind(this)
     }
 
+    onLogin(){
+        let to_send ={
+            email: this.state.email,
+            password: this.state.password
+        };
+        return fetch("http://localhost:3333/api/1.0.0/login",
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(to_send)
+        })
+        
+        .then((response) => {
+          if(response.status === 200){
+            return response.json();
+          }else if(response.status === 400){
+              this.setState({error: "error"})
+          }
+          
+          return;
+        })
+
+        .catch((error) => {
+          console.error(error);
+          return;
+        });
+    }
+
     _onPressButton(){
         this.setState({submitted: true})
         this.setState({error: ""})
@@ -38,10 +66,9 @@ export default class LoginScreen extends Component {
             return;
         }
 
-
-        console.log("Button clicked: " + this.state.email + " " + this.state.password)
         console.log("Validated and ready to send to the API")
-
+        this.onLogin()
+          
     }
 
     render(){

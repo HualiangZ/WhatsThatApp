@@ -9,8 +9,8 @@ export default class LoginScreen extends Component {
         super(props);
 
         this.state = {
-            firstName: "",
-            lastName: "",
+            first_name: "",
+            last_name: "",
             email: "",
             password: "",
             error: "",
@@ -20,16 +20,46 @@ export default class LoginScreen extends Component {
         this._onPressButton = this._onPressButton.bind(this)
     }
 
+    addUser(){
+        let to_send ={
+            first_name: this.state.first_name,
+            last_name: this.state.last_name,
+            email: this.state.email,
+            password: this.state.password
+        };
+        return fetch("http://localhost:3333/api/1.0.0/user",
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(to_send)
+        })
+        
+        .then((response) => {
+            if(response.status === 201){
+                Alert.alert("test");
+            }if(response.status === 400){
+                  this.setState({error: "Email alread used or password not strong enough"})
+            }       
+        })
+
+        .catch((error) => {
+          console.error(error);
+          return;
+        });
+    }
+
+
+
     _onPressButton() {
         this.setState({ submitted: true })
         this.setState({ error: "" })
 
-        if (!(this.state.firstName)) {
+        if (!(this.state.first_name)) {
             this.setState({ error: "Must enter first name" })
             return;
         }
 
-        if (!(this.state.lastName)) {
+        if (!(this.state.last_name)) {
             this.setState({ error: "Must enter last name" })
             return;
         }
@@ -48,11 +78,14 @@ export default class LoginScreen extends Component {
         if (!PASSWORD_REGEX.test(this.state.password)) {
             this.setState({ error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)" })
             return;
-        }
+        } 
 
+        
 
-        console.log("Button clicked: " + this.state.email + " " + this.state.password)
+        console.log("Button clicked: " + this.state.submitted)
         console.log("Validated and ready to send to the API")
+        this.addUser();
+        this.props.navigation.navigate("Login");
 
     }
 
@@ -66,11 +99,11 @@ export default class LoginScreen extends Component {
                         <TextInput
                             style={{ height: 40, borderWidth: 1, width: "100%" }}
                             placeholder="Enter your first name"
-                            onChangeText={firstName => this.setState({ firstName })}
+                            onChangeText={first_name     => this.setState({ first_name })}
                             defaultValue={this.state.email}
                         />
                         <>
-                            {this.state.submitted && !this.state.firstName &&
+                            {this.state.submitted && !this.state.first_name &&
                                 <Text style={styles.error}>*First name is required</Text>
                             }
                         </>
@@ -81,11 +114,11 @@ export default class LoginScreen extends Component {
                         <TextInput
                             style={{ height: 40, borderWidth: 1, width: "100%" }}
                             placeholder="Enter your last name"
-                            onChangeText={lastName => this.setState({ lastName })}
+                            onChangeText={last_name => this.setState({ last_name })}
                             defaultValue={this.state.email}
                         />
                         <>
-                            {this.state.submitted && !this.state.lastName &&
+                            {this.state.submitted && !this.state.last_name &&
                                 <Text style={styles.error}>*Last name is required</Text>
                             }
                         </>
