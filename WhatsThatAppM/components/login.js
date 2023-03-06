@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as EmailValidator from 'email-validator';
 
 export default class LoginScreen extends Component {
@@ -34,10 +34,21 @@ export default class LoginScreen extends Component {
           if(response.status === 200){
             return response.json();
           }else if(response.status === 400){
-              this.setState({error: "error"})
+              this.setState({error: "Email or Password incorrect"})
           }
-          
+        
           return;
+        })
+        .then(async(rJson) => {
+            try{
+                await AsyncStorage.setItem("whatsthat_id",rJson.id)
+                await AsyncStorage.setItem("whatsthat_token",rJson.token)
+                this.setState({"submitted": false})
+                this.props.navigation.navigate("Tab")
+            }
+            catch{
+                throw "Something went wrong"
+            }
         })
 
         .catch((error) => {
@@ -60,14 +71,9 @@ export default class LoginScreen extends Component {
             return;
         }
 
-        const PASSWORD_REGEX = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
-        if(!PASSWORD_REGEX.test(this.state.password)){
-            this.setState({error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)"})
-            return;
-        }
-
         console.log("Validated and ready to send to the API")
         this.onLogin()
+       
           
     }
 

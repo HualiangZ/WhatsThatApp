@@ -36,7 +36,7 @@ export default class LoginScreen extends Component {
         
         .then((response) => {
             if(response.status === 201){
-                Alert.alert("test");
+                return response.json();
             }if(response.status === 400){
                   this.setState({error: "Email alread used or password not strong enough"})
             }       
