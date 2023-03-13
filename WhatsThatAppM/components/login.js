@@ -25,8 +25,8 @@ export default class LoginScreen extends Component {
         };
         return fetch("http://localhost:3333/api/1.0.0/login",
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(to_send)
         })
         
