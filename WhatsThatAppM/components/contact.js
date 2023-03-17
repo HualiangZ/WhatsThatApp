@@ -52,7 +52,7 @@ export default class Contact extends Component {
           data={this.state.contactListData}
           renderItem={({ item }) => (
             <View>
-              <Text>{item.first_name}</Text>
+              <Text onPress={() => this.props.navigation.navigate("Chat")}>{item.first_name}</Text>
             </View>)}
         />
       </View>
