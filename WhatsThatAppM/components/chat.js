@@ -64,7 +64,11 @@ export default class Chat extends Component {
 
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
+                        <TextInput
+                            style={{ height: 40, borderWidth: 1, width: "100%" }}
+                            placeholder="Enter chat name"
+                            
+                        />
 
                             <TouchableOpacity onPress={() => this.setState({ modalChatVisible: !this.state.modalChatVisible })}>
                                 <View style={styles.button}>
@@ -107,7 +111,7 @@ const styles = StyleSheet.create({
         margin: 20,
         backgroundColor: 'white',
         borderRadius: 20,
-        padding: 35,
+        padding: 80,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {

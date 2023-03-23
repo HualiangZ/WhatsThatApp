@@ -100,7 +100,7 @@ export default class LoginScreen extends Component {
                             style={{ height: 40, borderWidth: 1, width: "100%" }}
                             placeholder="Enter your first name"
                             onChangeText={first_name     => this.setState({ first_name })}
-                            defaultValue={this.state.email}
+                            defaultValue={this.state.first_name}
                         />
                         <>
                             {this.state.submitted && !this.state.first_name &&
@@ -115,7 +115,7 @@ export default class LoginScreen extends Component {
                             style={{ height: 40, borderWidth: 1, width: "100%" }}
                             placeholder="Enter your last name"
                             onChangeText={last_name => this.setState({ last_name })}
-                            defaultValue={this.state.email}
+                            defaultValue={this.state.last_name}
                         />
                         <>
                             {this.state.submitted && !this.state.last_name &&

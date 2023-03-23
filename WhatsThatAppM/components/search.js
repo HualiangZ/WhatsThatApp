@@ -80,7 +80,7 @@ export default class Contact extends Component {
                                 </View>
                                 
                                 <View style = {{flex: 1, alignItems: "flex-end"}}>
-                                    <Text onPress={() => this.addContact()}>
+                                    <Text onPress={() => this.addContact(item.user_id)}>
                                         Add to Contact
                                     </Text>
                                 </View>  
