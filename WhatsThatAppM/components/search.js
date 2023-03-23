@@ -35,7 +35,7 @@ export default class Contact extends Component {
     }
 
     async addContact(userId){
-        return fetch("http://localhost:3333/api/1.0.0/user/" + userId + "/contact", {
+        return fetch("http://localhost:3333/api/1.0.0/user/" + userId  + "/contact", {
             method: "POST",
             headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
@@ -50,6 +50,7 @@ export default class Contact extends Component {
         })
 
     }
+
 
 
     render() {
@@ -79,7 +80,9 @@ export default class Contact extends Component {
                                 </View>
                                 
                                 <View style = {{flex: 1, alignItems: "flex-end"}}>
-                                    <Text onPress={() => this.addContact(item.user_id)}>Call</Text>
+                                    <Text onPress={() => this.addContact()}>
+                                        Add to Contact
+                                    </Text>
                                 </View>  
                             </View>
                         )}

@@ -17,7 +17,7 @@ export default class App extends Component {
           <Stack.Screen name="Login" component={LoginScreen}/>
           <Stack.Screen name="Signup" component={SignupScreen}/>
           <Stack.Screen name="Tab" component={Tab}/>
-          <Stack.Screen name="Chat" component={Chat}/>
+          <Stack.Screen options={{headerShown: true}} name="Chat" component={Chat}/>
         </Stack.Navigator>
       </NavigationContainer>
     )

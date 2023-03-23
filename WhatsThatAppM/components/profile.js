@@ -33,8 +33,7 @@ export default class Profile extends Component {
                 this.setState({
                     photo: data,
                     isLoading: false
-                })
-                console.log(photo)
+                });
             })
             .catch((err) => {
                 this.setState({
@@ -53,7 +52,8 @@ export default class Profile extends Component {
         return (
             
             <View>
-                <Image sourse={{ url: this.state.photo }} style={{width: 100, height: 100}} /> 
+                {console.log("here ", this.state.photo)}
+                <Image sourse={{ uri: this.state.photo }} style={{width: 100, height: 100}} /> 
             </View>
         )} else {
             return(<Text>loading</Text>)
