@@ -20,32 +20,32 @@ export default class LoginScreen extends Component {
         this._onPressButton = this._onPressButton.bind(this)
     }
 
-    addUser(){
-        let to_send ={
+    addUser() {
+        let to_send = {
             first_name: this.state.first_name,
             last_name: this.state.last_name,
             email: this.state.email,
             password: this.state.password
         };
         return fetch("http://localhost:3333/api/1.0.0/user",
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(to_send)
-        })
-        
-        .then((response) => {
-            if(response.status === 201){
-                return response.json();
-            }if(response.status === 400){
-                  this.setState({error: "Email alread used or password not strong enough"})
-            }       
-        })
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(to_send)
+            })
 
-        .catch((error) => {
-          console.error(error);
-          return;
-        });
+            .then((response) => {
+                if (response.status === 201) {
+                    return response.json();
+                } if (response.status === 400) {
+                    this.setState({ error: "Email alread used or password not strong enough" })
+                }
+            })
+
+            .catch((error) => {
+                console.error(error);
+                return;
+            });
     }
 
 
@@ -78,9 +78,9 @@ export default class LoginScreen extends Component {
         if (!PASSWORD_REGEX.test(this.state.password)) {
             this.setState({ error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)" })
             return;
-        } 
+        }
 
-        
+
 
         console.log("Button clicked: " + this.state.submitted)
         console.log("Validated and ready to send to the API")
@@ -99,7 +99,7 @@ export default class LoginScreen extends Component {
                         <TextInput
                             style={{ height: 40, borderWidth: 1, width: "100%" }}
                             placeholder="Enter your first name"
-                            onChangeText={first_name     => this.setState({ first_name })}
+                            onChangeText={first_name => this.setState({ first_name })}
                             defaultValue={this.state.first_name}
                         />
                         <>
@@ -188,13 +188,13 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
         justifyContent: "center"
-        
-      },
-      formContainer: {
-          flex: 1,
-          width: "80%",
-          justifyContent: "center"
-      },
+
+    },
+    formContainer: {
+        flex: 1,
+        width: "80%",
+        justifyContent: "center"
+    },
     email: {
         marginBottom: 5
     },

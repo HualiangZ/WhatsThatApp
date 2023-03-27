@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { Button, View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 
 export default class Contact extends Component {
 
@@ -8,9 +8,37 @@ export default class Contact extends Component {
     super(props);
     this.state = {
       isLoading: true,
-      contactListData: []
+      contactListData: [],
+      search: "",
+      searchQ: false
     }
   }
+
+
+  async searchButton() {
+    return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.search + "&search_in=contacts", {
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
+      }
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+
+          this.setState({
+            isLoading: false,
+            contactListData: responseJson,
+            searchQ: true
+
+          });
+        
+
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
 
   async getData() {
     return fetch("http://localhost:3333/api/1.0.0/contacts", {
@@ -48,6 +76,26 @@ export default class Contact extends Component {
     }
     return (
       <View>
+        <TextInput
+          style={{ height: 40, borderWidth: 1, width: "100%" }}
+          placeholder="search"
+          onSelectionChange={() => this.searchButton()}
+          onChangeText={search => this.setState({ search })}
+          defaultValue={this.state.search}
+        />
+        <Button
+          title="Search"
+          onPress={() => this.searchButton()}
+        />
+
+        {this.state.searchQ && <FlatList
+          data={this.state.contactListData}
+          renderItem={({ item }) => (
+            <View>
+              <Text>{item.given_name}</Text>
+            </View>)}
+        />}
+
         <FlatList
           data={this.state.contactListData}
           renderItem={({ item }) => (
@@ -55,6 +103,7 @@ export default class Contact extends Component {
               <Text>{item.first_name}</Text>
             </View>)}
         />
+
       </View>
     )
   };
