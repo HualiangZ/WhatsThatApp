@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ActivityIndicator} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default class Chat extends Component {
@@ -8,14 +8,16 @@ export default class Chat extends Component {
         super(props);
 
         this.state = {
-            isLoading: true,
+            name: "",
             modalChatVisible: false,
-            chatListData:[]
+            chatListData: [],
+            error: "",
+            submitted: false
         }
-
+        this._onPressButton = this._onPressButton.bind(this)
     }
 
-    async getData() {
+    async getChat() {
         return fetch("http://localhost:3333/api/1.0.0/chat", {
             headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
@@ -25,36 +27,61 @@ export default class Chat extends Component {
             .then((responseJson) => {
 
                 this.setState({
-                    isLoading: false,
                     chatListData: responseJson,
                 });
 
             })
             .catch((error) => {
                 this.setState({
-                    isLoading: false,
                 });
                 console.log(error);
             });
     }
 
     componentDidMount() {
-        this.getData();
+        this.getChat();
     }
 
-    async createChat(){
+    async createChat() {
+        let to_send = { name: this.state.name };
+
+        return fetch("http://localhost:3333/api/1.0.0/chat", {
+            method: "POST",
+            headers: {
+                "X-Authorization": await AsyncStorage.getItem("whatsthat_token"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(to_send)
+        })
+
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json;
+                } if (response.status === 400) {
+                    this.setState({ error: "Something whent wrong try again" })
+                }
+
+
+            })
+
 
     }
 
+    _onPressButton() {
+        this.setState({
+            submitted: true,
+            error: "",
+        })
+
+        if (!(this.state.name)) {
+            this.setState({ error: "Enter chat name" })
+        }
+
+        this.createChat()
+        this.getChat()
+    }
 
     render() {
-        if (this.state.isLoading) {
-            return (
-              <View>
-                <ActivityIndicator />
-              </View>
-            )
-          }
         return (
             <View>
                 <Modal animationType="none"
@@ -64,17 +91,31 @@ export default class Chat extends Component {
 
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                        <TextInput
-                            style={{ height: 40, borderWidth: 1, width: "100%" }}
-                            placeholder="Enter chat name"
-                            
-                        />
+                            <TextInput
+                                style={{ height: 40, borderWidth: 1, width: "100%", marginBottom: 10,}}
+                                placeholder="Enter chat name"
+                                onChangeText={name => this.setState({ name })}
+                                defaultValue={this.state.name}
+                            />
 
-                            <TouchableOpacity onPress={() => this.setState({ modalChatVisible: !this.state.modalChatVisible })}>
+                            <TouchableOpacity onPress={() => {this.getChat(), this._onPressButton(), this.setState({ modalChatVisible: !this.state.modalChatVisible })}}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Create Chat</Text>
                                 </View>
                             </TouchableOpacity>
+
+                            <TouchableOpacity onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
+                                <View style={styles.button}>
+                                    <Text style={styles.buttonText}>Close</Text>
+                                </View>
+                            </TouchableOpacity>
+
+                            <>
+                                {this.state.error &&
+                                    <Text style={styles.error}>{this.state.error}</Text>
+                                }
+                            </>
+
                         </View>
                     </View>
 
@@ -84,6 +125,16 @@ export default class Chat extends Component {
                         <Text style={styles.buttonText}>Create Chat</Text>
                     </View>
                 </TouchableOpacity>
+      
+                <FlatList
+                    style={{marginTop:10}}
+                    data={this.state.chatListData}
+                    renderItem={({ item }) => (
+                        <View>
+                            <Text padding>{item.name}</Text>
+                        </View>)}
+                />
+
             </View>
         )
     }
@@ -92,7 +143,7 @@ export default class Chat extends Component {
 
 const styles = StyleSheet.create({
     button: {
-        marginBottom: 30,
+        marginBottom:10,
         backgroundColor: '#2196F3'
     },
     buttonText: {
@@ -130,5 +181,9 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
+    },
+    error: {
+        color: "red",
+        fontWeight: '900'
     },
 })

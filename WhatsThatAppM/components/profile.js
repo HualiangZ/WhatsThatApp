@@ -102,7 +102,7 @@ export default class Profile extends Component {
         this.setState({ submitted: true })
         this.setState({ error: "" })
 
-        if (EmailValidator.validate(this.state.email) != "") {
+        if (!EmailValidator.validate(this.state.email)) {
             this.setState({ error: "Must enter valid email" })
             return;
         }
