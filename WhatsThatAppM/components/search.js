@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, FlatList,StyleSheet } from 'react-native';
 
 export default class Contact extends Component {
     constructor(props) {
@@ -48,7 +48,26 @@ export default class Contact extends Component {
                   this.setState({error: "error"})
             }       
         })
+        .catch((error)=>{
+            console.log(error);
+        })
 
+    }
+
+    async blockUser(userId){
+        return fetch("http://localhost:3333/api/1.0.0/user/"+ userId+"/block",{
+            method:"POST",
+            headers:{
+                "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
+            }
+        })
+        .then((response) => {
+            if(response.status === 201){
+                return response.json();
+            }if(response.status === 400){
+                  this.setState({error: "error"})
+            }       
+        })
     }
 
 
@@ -68,7 +87,7 @@ export default class Contact extends Component {
                     onPress={() => this.searchButton()}
                 />
                 <View >
-                    <FlatList
+                    <FlatList 
                         data={this.state.dataListData}
                         renderItem={({ item }) => (
                             <View  style={{ flex: 1, flexDirection: "row"}}>
@@ -79,11 +98,16 @@ export default class Contact extends Component {
                                     </Text>
                                 </View>
                                 
-                                <View style = {{flex: 1, alignItems: "flex-end"}}>
-                                    <Text onPress={() => this.addContact(item.user_id)}>
-                                        Add to Contact
-                                    </Text>
+                                <View style = {styles.button}>
+                                    <TouchableOpacity onPress={() => this.addContact(item.user_id)}>
+                                        <Text style={styles.buttonText}>Add to Contact</Text>                  
+                                    </TouchableOpacity>
                                 </View>  
+                                <View style = {styles.button}>
+                                    <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
+                                        <Text style={styles.buttonText}>Block User</Text>                  
+                                    </TouchableOpacity>
+                                </View> 
                             </View>
                         )}
                     />
@@ -93,3 +117,17 @@ export default class Contact extends Component {
         )
     };
 }
+
+const styles = StyleSheet.create({
+    button: {
+        flex: 0.2,
+        alignItems: 'flex-end',
+        marginBottom:10,
+        marginLeft:10,
+        backgroundColor: '#2196F3'
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: 'white'
+    },
+});

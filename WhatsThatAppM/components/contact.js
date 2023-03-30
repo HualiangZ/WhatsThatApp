@@ -24,13 +24,13 @@ export default class Contact extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
 
-          this.setState({
-            isLoading: false,
-            contactListData: responseJson,
-            searchQ: true
+        this.setState({
+          isLoading: false,
+          contactListData: responseJson,
+          searchQ: true
 
-          });
-        
+        });
+
 
 
       })
@@ -62,11 +62,30 @@ export default class Contact extends Component {
         console.log(error);
       });
   }
+
+  async blockUser(userId) {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + userId + "/block", {
+      method: "POST",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
+      }
+    })
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } if (response.status === 400) {
+          this.setState({ error: "error" })
+        }
+      })
+  }
+
+
   componentDidMount() {
     this.getData();
   }
 
   render() {
+    //this.getData()
     if (this.state.isLoading) {
       return (
         <View>
@@ -91,18 +110,36 @@ export default class Contact extends Component {
         {this.state.searchQ && <FlatList
           data={this.state.contactListData}
           renderItem={({ item }) => (
-            <View>
-              <Text>{item.given_name}</Text>
+            <View style={{ flex: 1, flexDirection: "row"}}>
+              <Text>
+                {item.given_name} {item.family_name}{"\n"}
+                {item.email}
+              </Text>
+              <View style={styles.button}>
+                <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
+                  <Text style={styles.buttonText}>Block User</Text>
+                </TouchableOpacity>
+              </View>
             </View>)}
         />}
-
-        <FlatList
-          data={this.state.contactListData}
-          renderItem={({ item }) => (
-            <View>
-              <Text>{item.first_name}</Text>
-            </View>)}
-        />
+        {!this.state.searchQ &&
+          <FlatList
+            data={this.state.contactListData}
+            renderItem={({ item }) => (
+              <View style={{ flex: 1, flexDirection: "row"}}>
+                <View>
+                  <Text>
+                    {item.first_name} {item.last_name}{"\n"}
+                    {item.email}
+                  </Text>
+                </View>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() =>{this.getData(),this.blockUser(item.user_id)}}>
+                    <Text style={styles.buttonText}>Block User</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>)}
+          />}
 
       </View>
     )
@@ -116,5 +153,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    flex: 0.2,
+    alignItems: 'flex-end',
+    marginBottom: 10,
+    marginLeft: 10,
+    backgroundColor: '#2196F3'
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: 'white'
   },
 });

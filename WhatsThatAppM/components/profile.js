@@ -173,11 +173,19 @@ export default class Profile extends Component {
                             />
 
                         </View>
-
+                        
                         <View>
                             <TouchableOpacity onPress={this._onPressButton}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Update</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View>
+                            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Blocked")}>
+                                <View style={styles.button}>
+                                    <Text style={styles.buttonText}>View Blocked Users</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -187,6 +195,8 @@ export default class Profile extends Component {
                                 <Text style={styles.error}>{this.state.error}</Text>
                             }
                         </>
+
+                        
 
                     </View>
                 </View>

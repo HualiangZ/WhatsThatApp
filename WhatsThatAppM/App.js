@@ -7,6 +7,7 @@ const Stack = createNativeStackNavigator();
 import LoginScreen from './components/login';
 import SignupScreen from './components/signup';
 import Tab from './components/tab-nav'
+import Blocked from './components/blockUsers';
 
 export default class App extends Component {
 
@@ -17,6 +18,7 @@ export default class App extends Component {
           <Stack.Screen name="Login" component={LoginScreen}/>
           <Stack.Screen name="Signup" component={SignupScreen}/>
           <Stack.Screen name="Tab" component={Tab}/>
+          <Stack.Screen options={{headerShown: true}} name="Blocked" component={Blocked}/>
           
         </Stack.Navigator>
       </NavigationContainer>
