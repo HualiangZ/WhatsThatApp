@@ -55,7 +55,7 @@ export default class Chat extends Component {
         })
 
             .then((response) => {
-                if (response.status === 200) {
+                if (response.status === 201) {
                     return response.json;
                 } if (response.status === 400) {
                     this.setState({ error: "Something whent wrong try again" })
@@ -75,10 +75,12 @@ export default class Chat extends Component {
 
         if (!(this.state.name)) {
             this.setState({ error: "Enter chat name" })
+        }else {
+            this.setState({modalChatVisible: !this.state.modalChatVisible})
+            this.createChat()
+            this.getChat()
         }
-
-        this.createChat()
-        this.getChat()
+        
     }
 
     render() {
@@ -92,29 +94,30 @@ export default class Chat extends Component {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <TextInput
-                                style={{ height: 40, borderWidth: 1, width: "100%", marginBottom: 10,}}
                                 placeholder="Enter chat name"
+                                style={{ height: 40, borderWidth: 1, width: "100%", marginBottom: 10,}}
                                 onChangeText={name => this.setState({ name })}
                                 defaultValue={this.state.name}
                             />
-
-                            <TouchableOpacity onPress={() => {this.getChat(), this._onPressButton(), this.setState({ modalChatVisible: !this.state.modalChatVisible })}}>
+                            <>
+                                {this.state.submitted && !this.state.name &&
+                                    <Text style={styles.error}>*Chat name is required</Text>
+                                }
+                            </>
+                            <TouchableOpacity onPress={() => {this._onPressButton()}}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Create Chat</Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
+                            <TouchableOpacity onPress={() => { 
+                                this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Close</Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <>
-                                {this.state.error &&
-                                    <Text style={styles.error}>{this.state.error}</Text>
-                                }
-                            </>
+
 
                         </View>
                     </View>
@@ -130,8 +133,8 @@ export default class Chat extends Component {
                     style={{marginTop:10}}
                     data={this.state.chatListData}
                     renderItem={({ item }) => (
-                        <View>
-                            <Text padding>{item.name}</Text>
+                        <View style={{marginTop:10}}>
+                            <Text onPress={() => this.props.navigation.navigate("Message")}>{item.name}</Text>
                         </View>)}
                 />
 
