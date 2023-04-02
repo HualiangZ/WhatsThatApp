@@ -120,14 +120,14 @@ export default class Contact extends Component {
 
 const styles = StyleSheet.create({
     button: {
-        flex: 0.2,
-        alignItems: 'flex-end',
-        marginBottom:10,
-        marginLeft:10,
+        //flex: 0.2,
+        marginBottom: 10,
+        marginLeft: 10,
         backgroundColor: '#2196F3'
-    },
-    buttonText: {
+      },
+      buttonText: {
         textAlign: 'center',
+        padding: 5,
         color: 'white'
-    },
+      },
 });

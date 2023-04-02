@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default class Chat extends Component {
@@ -75,12 +75,16 @@ export default class Chat extends Component {
 
         if (!(this.state.name)) {
             this.setState({ error: "Enter chat name" })
-        }else {
-            this.setState({modalChatVisible: !this.state.modalChatVisible})
+        } else {
+            this.setState({ modalChatVisible: !this.state.modalChatVisible })
             this.createChat()
             this.getChat()
         }
-        
+
+    }
+    async getchatId(id) {
+        this.props.navigation.navigate("Message")
+        await AsyncStorage.setItem("chat_id", id)
     }
 
     render() {
@@ -95,7 +99,7 @@ export default class Chat extends Component {
                         <View style={styles.modalView}>
                             <TextInput
                                 placeholder="Enter chat name"
-                                style={{ height: 40, borderWidth: 1, width: "100%", marginBottom: 10,}}
+                                style={{ height: 40, borderWidth: 1, width: "100%", marginBottom: 10, }}
                                 onChangeText={name => this.setState({ name })}
                                 defaultValue={this.state.name}
                             />
@@ -104,21 +108,19 @@ export default class Chat extends Component {
                                     <Text style={styles.error}>*Chat name is required</Text>
                                 }
                             </>
-                            <TouchableOpacity onPress={() => {this._onPressButton()}}>
+                            <TouchableOpacity onPress={() => { this._onPressButton() }}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Create Chat</Text>
                                 </View>
                             </TouchableOpacity>
 
-                            <TouchableOpacity onPress={() => { 
-                                this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
+                            <TouchableOpacity onPress={() => {
+                                this.setState({ modalChatVisible: !this.state.modalChatVisible })
+                            }}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Close</Text>
                                 </View>
                             </TouchableOpacity>
-
-
-
                         </View>
                     </View>
 
@@ -128,13 +130,13 @@ export default class Chat extends Component {
                         <Text style={styles.buttonText}>Create Chat</Text>
                     </View>
                 </TouchableOpacity>
-      
+
                 <FlatList
-                    style={{marginTop:10}}
+                    style={{ marginTop: 10 }}
                     data={this.state.chatListData}
                     renderItem={({ item }) => (
-                        <View style={{marginTop:10}}>
-                            <Text onPress={() => this.props.navigation.navigate("Message")}>{item.name}</Text>
+                        <View style={{ marginTop: 10 }}>
+                            <Text onPress={() => this.getchatId(item.chat_id)}>{item.name}</Text>
                         </View>)}
                 />
 
@@ -146,7 +148,7 @@ export default class Chat extends Component {
 
 const styles = StyleSheet.create({
     button: {
-        marginBottom:10,
+        marginBottom: 10,
         backgroundColor: '#2196F3'
     },
     buttonText: {

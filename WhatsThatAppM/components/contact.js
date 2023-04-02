@@ -107,26 +107,27 @@ export default class Contact extends Component {
           onPress={() => this.searchButton()}
         />
 
-        {this.state.searchQ && <FlatList
-          data={this.state.contactListData}
-          renderItem={({ item }) => (
-            <View style={{ flex: 1, flexDirection: "row"}}>
-              <Text>
-                {item.given_name} {item.family_name}{"\n"}
-                {item.email}
-              </Text>
-              <View style={styles.button}>
-                <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
-                  <Text style={styles.buttonText}>Block User</Text>
-                </TouchableOpacity>
-              </View>
-            </View>)}
-        />}
+        {this.state.searchQ &&
+          <FlatList
+            data={this.state.contactListData}
+            renderItem={({ item }) => (
+              <View style={{ flex: 1, flexDirection: "row" }}>
+                <Text>
+                  {item.given_name} {item.family_name}{"\n"}
+                  {item.email}
+                </Text>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
+                    <Text style={styles.buttonText}>Block User</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>)}
+          />}
         {!this.state.searchQ &&
           <FlatList
             data={this.state.contactListData}
             renderItem={({ item }) => (
-              <View style={{ flex: 1, flexDirection: "row"}}>
+              <View style={{ flex: 1, flexDirection: "row" }}>
                 <View>
                   <Text>
                     {item.first_name} {item.last_name}{"\n"}
@@ -134,7 +135,7 @@ export default class Contact extends Component {
                   </Text>
                 </View>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() =>{this.getData(),this.blockUser(item.user_id)}}>
+                  <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
                     <Text style={styles.buttonText}>Block User</Text>
                   </TouchableOpacity>
                 </View>
@@ -148,21 +149,15 @@ export default class Contact extends Component {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   button: {
-    flex: 0.2,
-    alignItems: 'flex-end',
+    //flex: 0.2,
     marginBottom: 10,
     marginLeft: 10,
     backgroundColor: '#2196F3'
   },
   buttonText: {
     textAlign: 'center',
+    padding: 5,
     color: 'white'
   },
 });
