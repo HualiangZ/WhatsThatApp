@@ -78,7 +78,7 @@ export default class Chat extends Component {
         } else {
             this.setState({ modalChatVisible: !this.state.modalChatVisible })
             this.createChat()
-            this.getChat()
+            
         }
 
     }
@@ -108,7 +108,7 @@ export default class Chat extends Component {
                                     <Text style={styles.error}>*Chat name is required</Text>
                                 }
                             </>
-                            <TouchableOpacity onPress={() => { this._onPressButton() }}>
+                            <TouchableOpacity onPress={() => { this._onPressButton(),this.getChat() }}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>Create Chat</Text>
                                 </View>

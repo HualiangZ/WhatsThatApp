@@ -39,6 +39,18 @@ export default class Contact extends Component {
       });
   }
 
+  async removeUser(userId) {
+    return fetch("http://localhost:3333/api/1.0.0/user/" + userId + "/contact", {
+      method: "DELETE",
+      headers: {
+        "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
+      }
+    })
+      .then((response) => response.json())
+      .catch((error) => {
+        console.log(error)
+      })
+  }
 
   async getData() {
     return fetch("http://localhost:3333/api/1.0.0/contacts", {
@@ -117,8 +129,14 @@ export default class Contact extends Component {
                   {item.email}
                 </Text>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
+                  <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
                     <Text style={styles.buttonText}>Block User</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => { this.getData(), this.removeUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Remove User</Text>
                   </TouchableOpacity>
                 </View>
               </View>)}
@@ -137,6 +155,12 @@ export default class Contact extends Component {
                 <View style={styles.button}>
                   <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
                     <Text style={styles.buttonText}>Block User</Text>
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => { this.getData(), this.removeUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Remove User</Text>
                   </TouchableOpacity>
                 </View>
               </View>)}
