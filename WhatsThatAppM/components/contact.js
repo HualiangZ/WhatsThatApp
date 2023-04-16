@@ -46,10 +46,14 @@ export default class Contact extends Component {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
       }
     })
-      .then((response) => response.json())
-      .catch((error) => {
-        console.log(error)
-      })
+    .then((response) => {
+      if (response.status === 200) {
+        this.getData();
+        return response.json();
+      } if (response.status === 400) {
+        this.setState({ error: "error" })
+      }
+    })
   }
 
   async getData() {
@@ -84,6 +88,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 201) {
+          this.getData();
           return response.json();
         } if (response.status === 400) {
           this.setState({ error: "error" })
@@ -106,7 +111,8 @@ export default class Contact extends Component {
       )
     }
     return (
-      <View>
+      <View 
+      >
         <TextInput
           style={{ height: 40, borderWidth: 1, width: "100%" }}
           placeholder="search"
@@ -123,8 +129,8 @@ export default class Contact extends Component {
           <FlatList
             data={this.state.contactListData}
             renderItem={({ item }) => (
-              <View style={{ flex: 1, flexDirection: "row" }}>
-                <Text>
+              <View style={{flexDirection: "row" }}>
+                <Text style={{ flex: 1 }}>
                   {item.given_name} {item.family_name}{"\n"}
                   {item.email}
                 </Text>
@@ -146,12 +152,10 @@ export default class Contact extends Component {
             data={this.state.contactListData}
             renderItem={({ item }) => (
               <View style={{ flex: 1, flexDirection: "row" }}>
-                <View>
-                  <Text>
+                  <Text style={{ flex: 1 }}>
                     {item.first_name} {item.last_name}{"\n"}
                     {item.email}
                   </Text>
-                </View>
                 <View style={styles.button}>
                   <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
                     <Text style={styles.buttonText}>Block User</Text>
@@ -174,7 +178,6 @@ export default class Contact extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    //flex: 0.2,
     marginBottom: 10,
     marginLeft: 10,
     backgroundColor: '#2196F3'

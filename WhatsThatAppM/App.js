@@ -9,7 +9,7 @@ import SignupScreen from './components/signup';
 import Tab from './components/tab-nav'
 import Blocked from './components/blockUsers';
 import Message from "./components/message"
-
+import ChatDetail from './components/chatDetail';
 export default class App extends Component {
 
   render(){
@@ -21,6 +21,7 @@ export default class App extends Component {
           <Stack.Screen name="Tab" component={Tab}/>
           <Stack.Screen options={{headerShown: true}} name="Blocked" component={Blocked}/>
           <Stack.Screen options={{headerShown: true}} name="Message" component={Message}/>
+          <Stack.Screen options={{headerShown: true}} name="ChatDetail" component={ChatDetail}/>
         </Stack.Navigator>
       </NavigationContainer>
     )

@@ -91,7 +91,7 @@ export default class Contact extends Component {
                         data={this.state.dataListData}
                         renderItem={({ item }) => (
                             <View  style={{ flex: 1, flexDirection: "row"}}>
-                                <View>
+                                <View style={{ flex: 1 }}>
                                     <Text>
                                         {item.given_name} {item.family_name}{"\n"}
                                         {item.email}           

@@ -19,29 +19,6 @@ export default class Chat extends Component {
         }
     }
 
-    async searchButton() {
-        return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.search + "&search_in=contacts", {
-            headers: {
-                "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
-            }
-        })
-            .then((response) => response.json())
-            .then((responseJson) => {
-
-                this.setState({
-                    contactListData: responseJson,
-                    searchQ: true
-
-                });
-
-                console.log(JSON.stringify(this.state.contactListData))
-
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
     async addMessage() {
         let to_send = { message: this.state.message };
         return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id") + "/message", {
@@ -62,27 +39,6 @@ export default class Chat extends Component {
             }).catch((error) => console.log(error))
     }
 
-    async addToChat(userId) {
-        return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id") + "/user/" + userId, {
-            method: "POST",
-            headers: {
-                "X-Authorization": await AsyncStorage.getItem("whatsthat_token"),
-            },
-        })
-        
-        .then((response) => {
-            if (response.status === 200) {
-                return response.json();
-            } if (response.status === 400) {
-                this.setState({ error: "user dones not exist" })
-            }
-        })
-
-        .catch((error) => {
-            console.error(error);
-            return;
-        });
-    }
 
     async getMessages() {
         return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id"), {
@@ -126,7 +82,7 @@ export default class Chat extends Component {
             <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: "column" }}>
 
                 <FlatList
-                    style={{ marginTop: 10 }}
+                    style={{ marginTop: 10,flexDirection:'column-reverse',marginBottom: 10}}
                     data={this.state.messageListData}
                     keyExtractor={({ message_id }) => message_id}
                     renderItem={({ item }) => (
@@ -135,58 +91,6 @@ export default class Chat extends Component {
                         </View>)}
                 />
 
-                <Modal animationType="none"
-                    visible={this.state.modalChatVisible}
-                    transparent={true}
-                    onRequestClose={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
-
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <TextInput
-                                style={{ height: 40, borderWidth: 1, width: "100%" }}
-                                placeholder="search"
-                                onSelectionChange={() => this.searchButton()}
-                                onChangeText={search => this.setState({ search })}
-                                defaultValue={this.state.search}
-                            />
-                            <Button
-                                title="Search"
-                                onPress={() => this.searchButton()}
-                            />
-
-                            <FlatList
-                                data={this.state.contactListData}
-                                renderItem={({ item }) => (
-                                    <View style={{ flex: 1, flexDirection: "row" }}>
-                                        <Text>
-                                            {item.given_name} {item.family_name}{"\n"}
-                                            {item.email}
-                                        </Text>
-                                        <View style={styles.button}>
-                                            <TouchableOpacity onPress={() => this.addToChat(item.user_id)}>
-                                                <Text style={styles.buttonText}>Add to Chat</Text>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>)}
-                            />
-
-                            <TouchableOpacity onPress={() => {
-                                this.setState({ modalChatVisible: !this.state.modalChatVisible })
-                            }}>
-                                <View style={styles.button}>
-                                    <Text style={styles.buttonText}>Close</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                </Modal>
-
-                <View style={styles.button}>
-                    <TouchableOpacity onPress={() => { this.setState({ modalChatVisible: true }) }}>
-                        <Text style={styles.buttonText}>Add User</Text>
-                    </TouchableOpacity>
-                </View>
 
                 <View style={{ flexDirection: "row" }}>
                     <TextInput

@@ -72,7 +72,7 @@ export default class blockUsers extends Component {
                     data={this.state.blockedListData}
                     renderItem={({ item }) => (
                         <View style={{ flex: 1, flexDirection: "row" }}>
-                            <View>
+                            <View style={{ flex: 1 }}>
                                 <Text>
                                     {item.first_name} {item.last_name}{"\n"}
                                     {item.email}
