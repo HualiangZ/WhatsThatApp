@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Button, FlatList,StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Button, FlatList, StyleSheet } from 'react-native';
 
 export default class Contact extends Component {
     constructor(props) {
@@ -8,9 +8,11 @@ export default class Contact extends Component {
 
         this.state = {
             dataListData: [],
-            search: ""
+            search: "",
+            photo: null
         }
     }
+
 
     async searchButton() {
         return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.search, {
@@ -24,7 +26,7 @@ export default class Contact extends Component {
                 this.setState({
                     isLoading: false,
                     dataListData: responseJson,
-                    
+
                 });
 
 
@@ -34,40 +36,40 @@ export default class Contact extends Component {
             });
     }
 
-    async addContact(userId){
-        return fetch("http://localhost:3333/api/1.0.0/user/" + userId  + "/contact", {
+    async addContact(userId) {
+        return fetch("http://localhost:3333/api/1.0.0/user/" + userId + "/contact", {
             method: "POST",
             headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
             }
-         })
-         .then((response) => {
-            if(response.status === 201){
-                return response.json();
-            }if(response.status === 400){
-                  this.setState({error: "error"})
-            }       
         })
-        .catch((error)=>{
-            console.log(error);
-        })
+            .then((response) => {
+                if (response.status === 201) {
+                    return response.json();
+                } if (response.status === 400) {
+                    this.setState({ error: "error" })
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
 
     }
 
-    async blockUser(userId){
-        return fetch("http://localhost:3333/api/1.0.0/user/"+ userId+"/block",{
-            method:"POST",
-            headers:{
+    async blockUser(userId) {
+        return fetch("http://localhost:3333/api/1.0.0/user/" + userId + "/block", {
+            method: "POST",
+            headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
             }
         })
-        .then((response) => {
-            if(response.status === 201){
-                return response.json();
-            }if(response.status === 400){
-                  this.setState({error: "error"})
-            }       
-        })
+            .then((response) => {
+                if (response.status === 201) {
+                    return response.json();
+                } if (response.status === 400) {
+                    this.setState({ error: "error" })
+                }
+            })
     }
 
 
@@ -87,32 +89,32 @@ export default class Contact extends Component {
                     onPress={() => this.searchButton()}
                 />
                 <View >
-                    <FlatList 
+                    <FlatList
                         data={this.state.dataListData}
                         renderItem={({ item }) => (
-                            <View  style={{ flex: 1, flexDirection: "row"}}>
+                            <View style={{ flex: 1, flexDirection: "row" }}>
                                 <View style={{ flex: 1 }}>
                                     <Text>
                                         {item.given_name} {item.family_name}{"\n"}
-                                        {item.email}           
+                                        {item.email}
                                     </Text>
                                 </View>
-                                
-                                <View style = {styles.button}>
+
+                                <View style={styles.button}>
                                     <TouchableOpacity onPress={() => this.addContact(item.user_id)}>
-                                        <Text style={styles.buttonText}>Add to Contact</Text>                  
+                                        <Text style={styles.buttonText}>Add</Text>
                                     </TouchableOpacity>
-                                </View>  
-                                <View style = {styles.button}>
+                                </View>
+                                <View style={styles.button}>
                                     <TouchableOpacity onPress={() => this.blockUser(item.user_id)}>
-                                        <Text style={styles.buttonText}>Block User</Text>                  
+                                        <Text style={styles.buttonText}>Block</Text>
                                     </TouchableOpacity>
-                                </View> 
+                                </View>
                             </View>
                         )}
                     />
                 </View>
-                
+
             </View>
         )
     };
@@ -124,10 +126,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginLeft: 10,
         backgroundColor: '#2196F3'
-      },
-      buttonText: {
+    },
+    buttonText: {
         textAlign: 'center',
         padding: 5,
         color: 'white'
-      },
+    },
 });

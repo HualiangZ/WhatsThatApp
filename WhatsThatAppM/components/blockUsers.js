@@ -44,7 +44,8 @@ export default class blockUsers extends Component {
             }
         })
             .then((response) => {
-                if (response.status === 201) {
+                if (response.status === 200) {
+                    this.getData();
                     return response.json();
                 } if (response.status === 400) {
                     this.setState({ error: "error" })
@@ -79,7 +80,7 @@ export default class blockUsers extends Component {
                                 </Text>
                             </View>
                             <View style={styles.button}>
-                                <TouchableOpacity onPress={() => {this.getData(), this.unblockUser(item.user_id)}}>
+                                <TouchableOpacity onPress={() => {this.unblockUser(item.user_id)}}>
                                     <Text style={styles.buttonText}>Unblock User</Text>
                                 </TouchableOpacity>
                             </View>

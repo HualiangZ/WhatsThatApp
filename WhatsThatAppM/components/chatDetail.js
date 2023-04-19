@@ -14,8 +14,10 @@ export default class chatDetail extends Component {
             MembersListData: [],
             search: "",
             searchQ: false,
-            submitted: false
+            submitted: false,
+            name:""
         }
+        this._onPressButton = this._onPressButton.bind(this)
     }
 
     async removeMember(userId) {
@@ -25,9 +27,12 @@ export default class chatDetail extends Component {
             "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
           }
         })
-        .then((response) => {
+        .then(async(response) => {
           if (response.status === 200) {
             this.getMember();
+            if(userId == await AsyncStorage.getItem("whatsthat_id")){
+                this.props.navigation.navigate("Chat")
+            }
             return response.json();
           } if (response.status === 400) {
             this.setState({ error: "error" })
@@ -40,6 +45,46 @@ export default class chatDetail extends Component {
             headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
             }
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json()
+                } else if (response.status === 401) {
+                    this.setState({ error: "Not authenticated" })
+                } else if (response.status === 403) {
+                    this.setState({ error: "Not allowed" })
+                }
+                else if (response.status === 404) {
+                    this.setState({ error: "Not there" })
+                } else {
+                    this.setState({ error: "something went wrong" })
+                }
+            }).then((rjson) => {
+                this.setState({
+                    MembersListData: rjson.members
+                })
+            })
+
+            .catch((error) => {
+                this.setState({
+                });
+                console.log(error);
+            });
+    }
+
+    async upateName() {
+        let to_send = {};
+
+        if (this.state.name != "") {
+            to_send["name"] = this.state.name
+        }
+        return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id"), {
+            method:"PATCH",
+            headers: {
+                "X-Authorization": await AsyncStorage.getItem("whatsthat_token"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(to_send)
         })
             .then((response) => {
                 if (response.status === 200) {
@@ -116,6 +161,24 @@ export default class chatDetail extends Component {
                 console.log(error);
             });
     }
+
+    _onPressButton() {
+        this.setState({
+            submitted: true,
+            error: "",
+        })
+
+        if (!(this.state.name)) {
+            this.setState({ error: "Enter chat name" })
+        } else {
+            
+            this.upateName();
+            this.props.navigation.navigate("Chat");
+
+        }
+        
+    }
+
     render() {
         return (
             <View>
@@ -123,6 +186,19 @@ export default class chatDetail extends Component {
                     <TouchableOpacity onPress={() => { this.setState({ modalChatVisible: true }) }}>
                         <Text style={styles.buttonText}>Add User</Text>
                     </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: "row" }}>
+                    <TextInput
+                        placeholder="Edit chat name"
+                        style={{ height: 40, borderWidth: 1, width: "80%", marginBottom: 10, marginLeft: 5 }}
+                        onChangeText={name => this.setState({ name })}
+                        defaultValue={this.state.name}
+                    />
+                    <View style={styles.button}>
+                        <TouchableOpacity onPress={() => { this._onPressButton(), this.setState({ name: "" }) }}>
+                            <Text style={styles.buttonText}>Update</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <FlatList
                     data={this.state.MembersListData}
@@ -164,7 +240,7 @@ export default class chatDetail extends Component {
                                 data={this.state.contactListData}
                                 renderItem={({ item }) => (
                                     <View style={{ flex: 1, flexDirection: "row" }}>
-                                        <Text>
+                                        <Text style={{ flex: 1}}>
                                             {item.given_name} {item.family_name}{"\n"}
                                             {item.email}
                                         </Text>

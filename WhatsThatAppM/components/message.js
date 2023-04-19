@@ -9,13 +9,15 @@ export default class Chat extends Component {
 
         this.state = {
             message: "",
+            messageId: "",
             messageListData: [],
             modalChatVisible: false,
             error: "",
             contactListData: [],
             search: "",
             searchQ: false,
-            submitted: false
+            submitted: false,
+            modalChatVisible: false
         }
     }
 
@@ -77,18 +79,77 @@ export default class Chat extends Component {
         console.log(this.state.messageListData)
     }
 
+    async deleteMessage(messageId){
+        return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id")+ 
+        "/message/" + messageId, {
+            method:"DELETE",
+            headers: {
+                "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
+            }
+        })
+        .then((response) => {
+            if (response.status === 200) {
+              this.getMessages();
+              return response.json();
+            } if (response.status === 400) {
+              this.setState({ error: "error" })
+            }
+          })
+    }
+
+    
+
     render() {
         return (
             <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: "column" }}>
 
                 <FlatList
-                    style={{ marginTop: 10,flexDirection:'column-reverse',marginBottom: 10}}
+                    style={{ marginTop: 10, flexDirection: 'column-reverse', marginBottom: 10 }}
                     data={this.state.messageListData}
                     keyExtractor={({ message_id }) => message_id}
                     renderItem={({ item }) => (
-                        <View style={{ marginTop: 10 }}>
-                            <Text>{item.message}</Text>
-                        </View>)}
+                        <View>
+                            <View style={{ marginTop: 10 }}>
+                                <Text onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible, messageId: item.message_id }) }}>
+                                    {item.message}{item.message_id}
+                                </Text>
+                            </View>
+                            <Modal animationType="none"
+                                visible={this.state.modalChatVisible}
+                                transparent={true}
+                                onRequestClose={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
+                                
+                                <View style={styles.centeredView}>
+                                    <View style={styles.modalView}>
+                                        <TextInput
+                                            style={{ height: 40, borderWidth: 1, width: "100%" }}
+                                            placeholder={this.state.messageId}
+                                            onChangeText={message => this.setState({ message })}
+                                            defaultValue={this.state.message}
+                                        />
+
+                                        <TouchableOpacity onPress={() => {
+                                            this.deleteMessage(this.state.messageId),
+                                            this.setState({ modalChatVisible: !this.state.modalChatVisible })
+                                        }}>
+                                            <View style={styles.button}>
+                                                <Text style={styles.buttonText}>Delete</Text>
+                                            </View>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity onPress={() => {
+                                            this.setState({ modalChatVisible: !this.state.modalChatVisible })
+                                        }}>
+                                            <View style={styles.button}>
+                                                <Text style={styles.buttonText}>Close</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </Modal>
+                        </View>
+                    )}
+
                 />
 
 

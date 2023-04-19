@@ -21,6 +21,27 @@ export default class Profile extends Component {
         this._onPressButton = this._onPressButton.bind(this)
     }
 
+    async logout() {
+        return fetch("http://localhost:3333/api/1.0.0/logout", {
+            method: "POST",
+            headers: { "X-Authorization": await AsyncStorage.getItem("whatsthat_token") }
+        })
+            .then(async (response) => {
+                if (response.status === 200) {
+                    AsyncStorage.getAllKeys()
+                        .then(keys => AsyncStorage.multiRemove(keys))
+                    this.props.navigation.navigate("Login")
+                } else if (response.status === 4011) {
+                    AsyncStorage.getAllKeys()
+                        .then(keys => AsyncStorage.multiRemove(keys))
+                    this.props.navigation.navigate("Login")
+                } else {
+                    throw "Something went wrong"
+                }
+            })
+
+    }
+
     componentDidMount() {
         this.profileImage();
     }
@@ -56,30 +77,30 @@ export default class Profile extends Component {
     async patchUser() {
         let to_send = {};
 
-        if(this.state.first_name != ""){
+        if (this.state.first_name != "") {
             to_send["first_name"] = this.state.first_name
         }
 
-        if(this.state.last_name != ""){
+        if (this.state.last_name != "") {
             to_send["last_name"] = this.state.last_name
         }
 
-        if(this.state.email != ""){
+        if (this.state.email != "") {
             to_send["email"] = this.state.email
         }
 
-        if(this.state.password != ""){
+        if (this.state.password != "") {
             to_send["password"] = this.state.password
         }
 
         console.log(to_send)
-        return fetch("http://localhost:3333/api/1.0.0/user/"+
-        await AsyncStorage.getItem("whatsthat_id"),
+        return fetch("http://localhost:3333/api/1.0.0/user/" +
+            await AsyncStorage.getItem("whatsthat_id"),
             {
                 method: "PATCH",
                 headers: {
                     "X-Authorization": await AsyncStorage.getItem("whatsthat_token"),
-                    "Content-Type": "application/json" 
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(to_send)
             })
@@ -127,8 +148,15 @@ export default class Profile extends Component {
                 <View style={styles.container}>
 
                     <View style={styles.formContainer}>
-                        <View>
+                        <View style={{flexDirection: "row" }}>
                             <Image source={{ uri: this.state.photo }} style={{ width: 100, height: 100 }} />
+                            <View>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate("Camera")}>
+                                    <View style={styles.button}>
+                                        <Text style={[styles.buttonText, {padding: 5}]}>Update image</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <View>
                             <Text>First Name:</Text>
@@ -173,7 +201,7 @@ export default class Profile extends Component {
                             />
 
                         </View>
-                        
+
                         <View>
                             <TouchableOpacity onPress={this._onPressButton}>
                                 <View style={styles.button}>
@@ -183,9 +211,19 @@ export default class Profile extends Component {
                         </View>
 
                         <View>
-                            <TouchableOpacity onPress={()=>this.props.navigation.navigate("Blocked")}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate("Blocked")}>
                                 <View style={styles.button}>
                                     <Text style={styles.buttonText}>View Blocked Users</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+
+
+
+                        <View>
+                            <TouchableOpacity onPress={() => this.logout()}>
+                                <View style={styles.button}>
+                                    <Text style={styles.buttonText}>Logout</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -196,7 +234,7 @@ export default class Profile extends Component {
                             }
                         </>
 
-                        
+
 
                     </View>
                 </View>

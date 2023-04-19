@@ -43,7 +43,10 @@ export default class Chat extends Component {
     }
 
     componentDidMount() {
-        this.getChat();
+        this.unsubscribe = this.props.navigation.addListener("focus", ()=> {
+            this.getChat();
+        })
+        
     }
 
     async createChat() {
@@ -108,7 +111,7 @@ export default class Chat extends Component {
                     renderItem={({ item }) => (
                         <View style={{ marginTop: 10, flexDirection: "row", flex: 1 }}>
                             <View style={{ flex: 1 }}>
-                                <Text onPress={() => this.props.navigation.navigate("Message")}>{item.name}</Text>
+                                <Text onPress={() => [this.props.navigation.navigate("Message"), this.getchatId(item.chat_id)]}>{item.name}</Text>
                             </View>
                             <View style={styles.button}>
                                 <TouchableOpacity onPress={() => [this.props.navigation.navigate("ChatDetail"), this.getchatId(item.chat_id)]}>

@@ -46,14 +46,14 @@ export default class Contact extends Component {
         "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
       }
     })
-    .then((response) => {
-      if (response.status === 200) {
-        this.getData();
-        return response.json();
-      } if (response.status === 400) {
-        this.setState({ error: "error" })
-      }
-    })
+      .then((response) => {
+        if (response.status === 200) {
+          this.getData();
+          return response.json();
+        } if (response.status === 400) {
+          this.setState({ error: "error" })
+        }
+      })
   }
 
   async getData() {
@@ -87,7 +87,7 @@ export default class Contact extends Component {
       }
     })
       .then((response) => {
-        if (response.status === 201) {
+        if (response.status === 200) {
           this.getData();
           return response.json();
         } if (response.status === 400) {
@@ -111,7 +111,7 @@ export default class Contact extends Component {
       )
     }
     return (
-      <View 
+      <View
       >
         <TextInput
           style={{ height: 40, borderWidth: 1, width: "100%" }}
@@ -129,20 +129,20 @@ export default class Contact extends Component {
           <FlatList
             data={this.state.contactListData}
             renderItem={({ item }) => (
-              <View style={{flexDirection: "row" }}>
+              <View style={{ flexDirection: "row" }}>
                 <Text style={{ flex: 1 }}>
                   {item.given_name} {item.family_name}{"\n"}
                   {item.email}
                 </Text>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
-                    <Text style={styles.buttonText}>Block User</Text>
+                  <TouchableOpacity onPress={() => { this.blockUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Block</Text>
                   </TouchableOpacity>
                 </View>
 
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.getData(), this.removeUser(item.user_id) }}>
-                    <Text style={styles.buttonText}>Remove User</Text>
+                  <TouchableOpacity onPress={() => { this.removeUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>)}
@@ -152,19 +152,19 @@ export default class Contact extends Component {
             data={this.state.contactListData}
             renderItem={({ item }) => (
               <View style={{ flex: 1, flexDirection: "row" }}>
-                  <Text style={{ flex: 1 }}>
-                    {item.first_name} {item.last_name}{"\n"}
-                    {item.email}
-                  </Text>
+                <Text style={{ flex: 1 }}>
+                  {item.first_name} {item.last_name}{"\n"}
+                  {item.email}
+                </Text>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.getData(), this.blockUser(item.user_id) }}>
-                    <Text style={styles.buttonText}>Block User</Text>
+                  <TouchableOpacity onPress={() => {this.blockUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Block</Text>
                   </TouchableOpacity>
                 </View>
 
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.getData(), this.removeUser(item.user_id) }}>
-                    <Text style={styles.buttonText}>Remove User</Text>
+                  <TouchableOpacity onPress={() => {this.removeUser(item.user_id) }}>
+                    <Text style={styles.buttonText}>Remove</Text>
                   </TouchableOpacity>
                 </View>
               </View>)}
