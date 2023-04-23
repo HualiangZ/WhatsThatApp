@@ -100,7 +100,7 @@ export default class Chat extends Component {
 
             <View style={{ flex: 1 }}>
                 <TouchableOpacity onPress={() => this.setState({ modalChatVisible: true })}>
-                    <View style={[styles.button, { padding: 15 }]}>
+                    <View style={[styles.button,  {padding: 15} ]}>
                         <Text style={styles.buttonText}>Create Chat</Text>
                     </View>
                 </TouchableOpacity>
@@ -111,10 +111,10 @@ export default class Chat extends Component {
                     renderItem={({ item }) => (
                         <View style={{ marginTop: 10, flexDirection: "row", flex: 1 }}>
                             <View style={{ flex: 1 }}>
-                                <Text onPress={() => [this.props.navigation.navigate("Message"), this.getchatId(item.chat_id)]}>{item.name}</Text>
+                                <Text onPress={() => {this.props.navigation.navigate("Message"), this.getchatId(item.chat_id)}}>{item.name}</Text>
                             </View>
                             <View style={styles.button}>
-                                <TouchableOpacity onPress={() => [this.props.navigation.navigate("ChatDetail"), this.getchatId(item.chat_id)]}>
+                                <TouchableOpacity onPress={() => {this.props.navigation.navigate("ChatDetail"), this.getchatId(item.chat_id)}}>
                                     <Text style={styles.buttonText}>Chat Details</Text>
                                 </TouchableOpacity>
                             </View>

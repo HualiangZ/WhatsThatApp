@@ -41,6 +41,29 @@ export default class Chat extends Component {
             }).catch((error) => console.log(error))
     }
 
+    async updateMessage(messageId) {
+        let to_send = {};
+        if (this.state.message != "") {
+            to_send["message"] = this.state.message
+        }
+        return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id") + "/message/" + messageId, {
+            method: "PATCH",
+            headers: {
+                "X-Authorization": await AsyncStorage.getItem("whatsthat_token"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(to_send)
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    this.setState({ message: "" })
+                    this.getMessages()
+                } else {
+                    this.setState({ error: "err" })
+                }
+            }).catch((error) => console.log(error))
+    }
+
 
     async getMessages() {
         return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id"), {
@@ -110,8 +133,9 @@ export default class Chat extends Component {
                     renderItem={({ item }) => (
                         <View>
                             <View style={{ marginTop: 10 }}>
-                                <Text onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible, messageId: item.message_id }) }}>
-                                    {item.message}{item.message_id}
+                                <Text onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible, 
+                                    messageId: item.message_id }) }}>
+                                    {item.author.first_name} {": "}{item.message}
                                 </Text>
                             </View>
                             <Modal animationType="none"
@@ -123,10 +147,19 @@ export default class Chat extends Component {
                                     <View style={styles.modalView}>
                                         <TextInput
                                             style={{ height: 40, borderWidth: 1, width: "100%" }}
-                                            placeholder={this.state.messageId}
+                                            placeholder={""}
                                             onChangeText={message => this.setState({ message })}
                                             defaultValue={this.state.message}
                                         />
+
+                                        <TouchableOpacity onPress={() => {
+                                            this.updateMessage(this.state.messageId),
+                                            this.setState({ modalChatVisible: !this.state.modalChatVisible })
+                                        }}>
+                                            <View style={styles.button}>
+                                                <Text style={styles.buttonText}>Update</Text>
+                                            </View>
+                                        </TouchableOpacity>
 
                                         <TouchableOpacity onPress={() => {
                                             this.deleteMessage(this.state.messageId),
