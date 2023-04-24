@@ -102,6 +102,11 @@ export default class Chat extends Component {
         console.log(this.state.messageListData)
     }
 
+    dateTime(epoch){
+        var myDate = new Date( epoch *1000);
+        return myDate.toLocaleString();
+    }
+
     async deleteMessage(messageId){
         return fetch("http://localhost:3333/api/1.0.0/chat/" + await AsyncStorage.getItem("chat_id")+ 
         "/message/" + messageId, {
@@ -124,21 +129,29 @@ export default class Chat extends Component {
 
     render() {
         return (
-            <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: "column" }}>
-
+            <View style={{ flex: 1}}>
+                
                 <FlatList
-                    style={{ marginTop: 10, flexDirection: 'column-reverse', marginBottom: 10 }}
+                    style={{ marginTop: 10,marginBottom: 10 }}
                     data={this.state.messageListData}
                     keyExtractor={({ message_id }) => message_id}
+                    inverted={true}
                     renderItem={({ item }) => (
                         <View>
-                            <View style={{ marginTop: 10 }}>
-                                <Text onPress={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible, 
-                                    messageId: item.message_id }) }}>
-                                    {item.author.first_name} {": "}{item.message}
+                            <View style={{ marginTop: 10}}>
+                                <Text onPress={async () => { {if(item.author.user_id == await AsyncStorage.getItem("whatsthat_id")){
+                                    this.setState({ modalChatVisible: !this.state.modalChatVisible, 
+                                        messageId: item.message_id })
+                                }} }}>
+                                    {item.author.first_name} {": "}{item.message}{'\n'}{this.dateTime(item.timestamp)}
                                 </Text>
                             </View>
-                            <Modal animationType="none"
+                            
+                        </View>
+                    )}
+
+                />
+                <Modal animationType="none"
                                 visible={this.state.modalChatVisible}
                                 transparent={true}
                                 onRequestClose={() => { this.setState({ modalChatVisible: !this.state.modalChatVisible }) }}>
@@ -180,12 +193,6 @@ export default class Chat extends Component {
                                     </View>
                                 </View>
                             </Modal>
-                        </View>
-                    )}
-
-                />
-
-
                 <View style={{ flexDirection: "row" }}>
                     <TextInput
                         placeholder="Text message"
@@ -199,6 +206,7 @@ export default class Chat extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
+                
 
             </View>
         )

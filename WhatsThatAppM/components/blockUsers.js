@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default class blockUsers extends Component {
+export default class BlockUsers extends Component {
     constructor(props) {
         super(props);
         this.state = {

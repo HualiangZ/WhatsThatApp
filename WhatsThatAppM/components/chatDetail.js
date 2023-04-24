@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, FlatList, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export default class chatDetail extends Component {
+export default class ChatDetail extends Component {
 
     constructor(props) {
         super(props);
@@ -140,7 +140,7 @@ export default class chatDetail extends Component {
     }
 
     async searchButton() {
-        return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.search + "&search_in=contacts", {
+        return fetch("http://localhost:3333/api/1.0.0/search?q=" + this.state.search + "&search_in=contacts&limit=10", {
             headers: {
                 "X-Authorization": await AsyncStorage.getItem("whatsthat_token")
             }

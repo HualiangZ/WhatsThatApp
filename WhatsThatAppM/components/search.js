@@ -16,15 +16,18 @@ export default class Contact extends Component {
 
     incrementValue = () => {
         if(this.state.dataListData.length != 0){
-            this.setState({ offset: this.state.offset + 2 });
-            this.searchButton()
+            this.setState({ offset: this.state.offset + 2 }, () => {
+                this.searchButton()
+            });
+            
         }
     }
 
     decreaseValue = () => {
         if (this.state.offset != 0) {
-            this.setState({ offset: this.state.offset - 2 });
-            this.searchButton()
+            this.setState({ offset: this.state.offset - 2 }, () => {
+                this.searchButton()
+            });
         }
     }
 
@@ -97,7 +100,7 @@ export default class Contact extends Component {
                     <TextInput
                         style={{ height: 40, borderWidth: 1, width: "100%" }}
                         placeholder="search"
-                        onSelectionChange={() => { this.searchButton(), this.setState({ offset: 0 }) }}
+                        onSelectionChange={() => { this.searchButton()}}
                         onChangeText={search => this.setState({ search })}
                         defaultValue={this.state.search}
                     />
