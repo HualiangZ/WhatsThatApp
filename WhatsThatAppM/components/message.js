@@ -10,7 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default class Chat extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       message: '',
       messageId: '',
@@ -20,11 +19,15 @@ export default class Chat extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.getMessages();
-    setInterval(() => {
+    this.interval = setInterval(() => {
       this.getMessages();
     }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   async getMessages() {
