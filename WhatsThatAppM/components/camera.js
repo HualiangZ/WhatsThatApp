@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-undef */
@@ -7,13 +8,15 @@
 import {
   Camera, CameraType,
 } from 'expo-camera';
+
 import { useState } from 'react';
 import {
   StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function CameraSendToServer() {
+// eslint-disable-next-line react/prop-types
+export default function CameraSendToServer({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [permission] = Camera.useCameraPermissions();
   const [camera, setCamera] = useState(null);

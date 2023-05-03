@@ -69,7 +69,7 @@ export default class Contact extends Component {
         } if (response.status === 400) {
           this.setState({ error: 'Can not add yourself', modalError: !this.state.modalError });
         }
-        return this.setState({ error: 'unable to  add yourself' });
+        return this.setState({ error: 'unable to add yourself' });
       })
       .catch((error) => {
         console.log(error);

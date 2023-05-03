@@ -52,8 +52,9 @@ export default class LoginScreen extends Component {
           this.setState({ submitted: false });
           this.props.navigation.navigate('Tab');
         } catch {
-          this.setState({ error: 'Something went wrong' });
+          return this.setState({ error: 'Email or Password incorrect' });
         }
+        return this.setState({ error: 'Email or Password incorrect' });
       })
 
       .catch((error) => {

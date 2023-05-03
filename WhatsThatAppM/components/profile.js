@@ -29,8 +29,11 @@ export default class Profile extends Component {
   }
 
   componentDidMount() {
-    this.profileImage();
-    this.getUser();
+    // eslint-disable-next-line react/no-unused-class-component-methods
+    this.unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.profileImage();
+      this.getUser();
+    });
   }
 
   onPressButton() {

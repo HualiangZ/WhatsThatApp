@@ -22,6 +22,9 @@ export default class Chat extends Component {
 
   async componentDidMount() {
     this.getMessages();
+    setInterval(() => {
+      this.getMessages();
+    }, 1000);
   }
 
   async getMessages() {
