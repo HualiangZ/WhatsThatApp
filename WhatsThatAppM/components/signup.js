@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
+  View, Text, TextInput, TouchableOpacity, StyleSheet,
 } from 'react-native';
 
 import * as EmailValidator from 'email-validator';
@@ -31,22 +31,22 @@ export default class LoginScreen extends Component {
     this.setState({ error: '' });
 
     if (!(this.state.firstName)) {
-      this.setState({ error: 'Must enter first name', submitted: false });
+      this.setState({ error: 'Must enter first name' });
       return;
     }
 
     if (!(this.state.lastName)) {
-      this.setState({ error: 'Must enter last name', submitted: false });
+      this.setState({ error: 'Must enter last name' });
       return;
     }
 
     if (!(this.state.email && this.state.password)) {
-      this.setState({ error: 'Must enter email and password', submitted: false });
+      this.setState({ error: 'Must enter email and password' });
       return;
     }
 
     if (!EmailValidator.validate(this.state.email)) {
-      this.setState({ error: 'Must enter valid email', submitted: false });
+      this.setState({ error: 'Must enter valid email' });
       return;
     }
 
@@ -95,13 +95,6 @@ export default class LoginScreen extends Component {
   }
 
   render() {
-    if (this.state.submitted) {
-      return (
-        <View>
-          <ActivityIndicator />
-        </View>
-      );
-    }
     return (
       <View style={styles.container}>
 
