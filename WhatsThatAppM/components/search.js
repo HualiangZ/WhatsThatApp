@@ -5,7 +5,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Button, FlatList, StyleSheet, Modal,
+  View, Text, TextInput, TouchableOpacity, Button, FlatList, StyleSheet,
+  Modal, ActivityIndicator, Image,
 } from 'react-native';
 
 export default class Contact extends Component {
@@ -13,33 +14,62 @@ export default class Contact extends Component {
     super(props);
 
     this.state = {
+      isLoading: false,
       dataListData: [],
       search: '',
       offset: 0,
       error: '',
       modalError: false,
-    //   photo: null,
+      photo: {},
     };
   }
 
-  incrementValue = () => {
+  incrementValue() {
     if (this.state.dataListData.length === 2) {
-      this.setState({ offset: this.state.offset + 2 }, () => {
+      this.setState({ offset: this.state.offset + 2, isLoading: true }, () => {
         this.searchButton();
       });
     }
-  };
+  }
 
-  decreaseValue = () => {
+  decreaseValue() {
     if (this.state.offset !== 0) {
-      this.setState({ offset: this.state.offset - 2 }, () => {
+      this.setState({ offset: this.state.offset - 2, isLoading: true }, () => {
         this.searchButton();
       });
     }
-  };
+  }
+
+  async profileImage(userId) {
+    fetch(`http://localhost:3333/api/1.0.0/user/${
+      userId}/photo`, {
+      method: 'GET',
+      headers: {
+        'X-Authorization': await AsyncStorage.getItem('whatsthat_token'),
+      },
+    })
+      .then((response) => response.blob())
+      .then((responseBlob) => {
+        const data = URL.createObjectURL(responseBlob);
+        this.setState((prevState) => ({
+          photo: {
+            ...prevState.photo,
+            [userId]: data,
+          },
+          isLoading: false,
+        }));
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        console.log(err);
+      });
+  }
 
   async searchButton() {
-    return fetch(`http://localhost:3333/api/1.0.0/search?q=${this.state.search}&limit=2&offset=${this.state.offset}`, {
+    return fetch(`http://localhost:3333/api/1.0.0/search?q=${this.state.search}&limit=2&offset=
+    ${this.state.offset}`, {
       headers: {
         'X-Authorization': await AsyncStorage.getItem('whatsthat_token'),
       },
@@ -48,7 +78,6 @@ export default class Contact extends Component {
       .then((responseJson) => {
         this.setState({
           dataListData: responseJson,
-
         });
       })
       .catch((error) => {
@@ -65,7 +94,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          return response.json();
+          return this.setState({ error: 'Person added to contact', modalError: !this.state.modalError });
         } if (response.status === 400) {
           this.setState({ error: 'Can not add yourself', modalError: !this.state.modalError });
         }
@@ -85,6 +114,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
+          this.setState({ error: 'Person has been blocked', modalError: !this.state.modalError });
           return response.json();
         } if (response.status === 400) {
           return this.setState({ error: 'Can not block yourself', modalError: !this.state.modalError });
@@ -94,25 +124,42 @@ export default class Contact extends Component {
   }
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View>
+          <ActivityIndicator />
+          <FlatList
+            data={this.state.dataListData}
+            renderItem={({ item }) => {
+              this.profileImage(item.user_id);
+            }}
+          />
+        </View>
+      );
+    }
     return (
       <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'column' }}>
         <View style={{ flex: 1, flexDirection: 'column' }}>
           <TextInput
             style={{ height: 40, borderWidth: 1, width: '100%' }}
             placeholder="search"
-            onSelectionChange={() => { this.searchButton(); }}
+            onSelectionChange={() => { this.searchButton(); this.setState({ offset: 0 }); }}
             onChangeText={(search) => this.setState({ search })}
             defaultValue={this.state.search}
           />
           <Button
             title="Search"
-            onPress={() => { this.searchButton(); this.setState({ offset: 0 }); }}
+            onPress={() => { this.searchButton(); this.setState({ offset: 0, isLoading: true }); }}
           />
           <View>
             <FlatList
               data={this.state.dataListData}
               renderItem={({ item }) => (
                 <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <Image
+                    source={{ uri: this.state.photo[item.user_id] }}
+                    style={{ width: 60, height: 60 }}
+                  />
                   <View style={{ flex: 1 }}>
                     <Text>
                       {item.given_name}
@@ -140,13 +187,19 @@ export default class Contact extends Component {
         </View>
         <View style={{ flexDirection: 'row' }}>
           <View style={styles.button}>
-            <TouchableOpacity onPress={() => { this.decreaseValue(); }}>
+            <TouchableOpacity onPress={() => {
+              this.decreaseValue();
+            }}
+            >
               <Text style={styles.buttonText}>Back</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.button}>
-            <TouchableOpacity onPress={() => { this.incrementValue(); }}>
+            <TouchableOpacity onPress={() => {
+              this.incrementValue();
+            }}
+            >
               <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
           </View>

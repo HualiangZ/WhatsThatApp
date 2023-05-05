@@ -83,7 +83,7 @@ export default class Chat extends Component {
       .then((response) => {
         if (response.status === 201) {
           this.getChat();
-          return response.json;
+          return response.json();
         } if (response.status === 400) {
           return this.setState({ error: 'Something whent wrong try again', modalError: !this.state.modalError });
         }

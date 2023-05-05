@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator,
 } from 'react-native';
 
 import * as EmailValidator from 'email-validator';
@@ -31,41 +31,43 @@ export default class LoginScreen extends Component {
     this.setState({ error: '' });
 
     if (!(this.state.firstName)) {
-      this.setState({ error: 'Must enter first name' });
+      this.setState({ error: 'Must enter first name', submitted: false });
       return;
     }
 
     if (!(this.state.lastName)) {
-      this.setState({ error: 'Must enter last name' });
+      this.setState({ error: 'Must enter last name', submitted: false });
       return;
     }
 
     if (!(this.state.email && this.state.password)) {
-      this.setState({ error: 'Must enter email and password' });
+      this.setState({ error: 'Must enter email and password', submitted: false });
       return;
     }
 
     if (!EmailValidator.validate(this.state.email)) {
-      this.setState({ error: 'Must enter valid email' });
+      this.setState({ error: 'Must enter valid email', submitted: false });
       return;
     }
 
     const PASSWORD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     if (!PASSWORD_REGEX.test(this.state.password)) {
-      this.setState({ error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)" });
+      this.setState({
+        error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)",
+        submitted: false,
+      });
       return;
     }
 
     console.log(`Button clicked: ${this.state.submitted}`);
     console.log('Validated and ready to send to the API');
     this.addUser();
-    this.props.navigation.navigate('Login');
   }
 
   addUser() {
     const toSend = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
+      first_name: this.state.firstName,
+      last_name: this.state.lastName,
       email: this.state.email,
       password: this.state.password,
     };
@@ -80,19 +82,26 @@ export default class LoginScreen extends Component {
 
       .then((response) => {
         if (response.status === 201) {
-          return response.json();
+          return this.setState({ submitted: false }, () => { this.props.navigation.navigate('Login'); });
         } if (response.status === 400) {
-          return this.setState({ error: 'Email alread used or password not strong enough' });
+          return this.setState({ error: 'Email alread used', submitted: false });
         }
-        return this.setState({ error: 'Something went wrong' });
+        return this.setState({ error: 'Something went wrong', submitted: false });
       })
 
       .catch(() => {
-        this.setState({ error: 'Something went wrong' });
+        this.setState({ error: 'Something went wrong', submitted: false });
       });
   }
 
   render() {
+    if (this.state.submitted) {
+      return (
+        <View>
+          <ActivityIndicator />
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
 

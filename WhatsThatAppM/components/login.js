@@ -54,7 +54,7 @@ export default class LoginScreen extends Component {
         } catch {
           return this.setState({ error: 'Email or Password incorrect' });
         }
-        return this.setState({ error: 'Email or Password incorrect' });
+        return 0;
       })
 
       .catch((error) => {

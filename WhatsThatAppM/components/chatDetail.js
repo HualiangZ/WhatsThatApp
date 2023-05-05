@@ -99,9 +99,8 @@ export default class ChatDetail extends Component {
         if (response.status === 200) {
           this.getMember();
           if (userId === await AsyncStorage.getItem('whatsthat_id')) {
-            this.props.navigation.navigate('Chat');
+            return this.props.navigation.navigate('Chat');
           }
-          return response.json();
         } if (response.status === 400) {
           return this.setState({ error: 'something went wrong' });
         }
@@ -157,8 +156,7 @@ export default class ChatDetail extends Component {
 
       .then((response) => {
         if (response.status === 200) {
-          this.getMember();
-          return response.json();
+          return this.getMember();
         } if (response.status === 400) {
           return this.setState({ error: 'user does not exist' });
         }

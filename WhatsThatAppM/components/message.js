@@ -159,9 +159,10 @@ export default class Chat extends Component {
                   }
                 }}
                 >
-                  {item.author.first_name}
-                  {' '}
-                  {': '}
+                  <Text style={{ fontWeight: 'bold' }}>
+                    {item.author.first_name}
+                    {': '}
+                  </Text>
                   {item.message}
                   {'\n'}
                   {this.dateTime(item.timestamp)}

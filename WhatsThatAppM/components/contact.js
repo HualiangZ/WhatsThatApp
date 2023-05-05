@@ -4,7 +4,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
 import {
-  Button, View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator, Modal,
+  Button, View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator,
+  Modal, Image,
 } from 'react-native';
 
 export default class Contact extends Component {
@@ -12,18 +13,20 @@ export default class Contact extends Component {
     super(props);
     this.state = {
       isLoading: true,
+      offset: 0,
       contactListData: [],
       search: '',
       modalError: false,
+      photo: {},
       searchQ: false,
     };
   }
 
   componentDidMount() {
-    this.getData();
+    this.getContact();
   }
 
-  async getData() {
+  async getContact() {
     return fetch('http://localhost:3333/api/1.0.0/contacts', {
       headers: {
         'X-Authorization': await AsyncStorage.getItem('whatsthat_token'),
@@ -32,7 +35,6 @@ export default class Contact extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
-          isLoading: false,
           contactListData: responseJson,
         });
       })
@@ -44,8 +46,51 @@ export default class Contact extends Component {
       });
   }
 
+  incrementValue() {
+    if (this.state.contactListData.length === 2) {
+      this.setState({ offset: this.state.offset + 2, isLoading: true }, () => {
+        this.searchButton();
+      });
+    }
+  }
+
+  decreaseValue() {
+    if (this.state.offset !== 0) {
+      this.setState({ offset: this.state.offset - 2, isLoading: true }, () => {
+        this.searchButton();
+      });
+    }
+  }
+
+  async profileImage(userId) {
+    fetch(`http://localhost:3333/api/1.0.0/user/${
+      userId}/photo`, {
+      method: 'GET',
+      headers: {
+        'X-Authorization': await AsyncStorage.getItem('whatsthat_token'),
+      },
+    })
+      .then((response) => response.blob())
+      .then((responseBlob) => {
+        const data = URL.createObjectURL(responseBlob);
+        this.setState((prevState) => ({
+          photo: {
+            ...prevState.photo,
+            [userId]: data,
+          },
+          isLoading: false,
+        }));
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        console.log(err);
+      });
+  }
+
   async searchButton() {
-    return fetch(`http://localhost:3333/api/1.0.0/search?q=${this.state.search}&search_in=contacts`, {
+    return fetch(`http://localhost:3333/api/1.0.0/search?q=${this.state.search}&search_in=contacts&limit=2&offset=${this.state.offset}`, {
       headers: {
         'X-Authorization': await AsyncStorage.getItem('whatsthat_token'),
       },
@@ -53,10 +98,8 @@ export default class Contact extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
-          isLoading: false,
           contactListData: responseJson,
           searchQ: true,
-
         });
       })
       .catch((error) => {
@@ -73,7 +116,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.getData();
+          this.getContact();
           return response.json();
         } if (response.status === 400) {
           return this.setState({ error: 'unable to remove contact', modalError: !this.state.modalError });
@@ -91,7 +134,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.getData();
+          this.getContact();
           return response.json();
         } if (response.status === 400) {
           return this.setState({ error: 'unable to block contact', modalError: !this.state.modalError });
@@ -101,20 +144,25 @@ export default class Contact extends Component {
   }
 
   render() {
-    // this.getData()
     if (this.state.isLoading) {
       return (
         <View>
           <ActivityIndicator />
+          <FlatList
+            data={this.state.contactListData}
+            renderItem={({ item }) => {
+              this.profileImage(item.user_id);
+            }}
+          />
         </View>
       );
     }
     return (
-      <View>
+      <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'flex-end' }}>
         <TextInput
           style={{ height: 40, borderWidth: 1, width: '100%' }}
           placeholder="search"
-          onSelectionChange={() => this.searchButton()}
+          onSelectionChange={() => { this.searchButton(); this.setState({ offset: 0 }); }}
           onChangeText={(search) => this.setState({ search })}
           defaultValue={this.state.search}
         />
@@ -125,31 +173,56 @@ export default class Contact extends Component {
 
         {this.state.searchQ
           && (
-          <FlatList
-            data={this.state.contactListData}
-            renderItem={({ item }) => (
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={{ flex: 1 }}>
-                  {item.given_name}
-                  {' '}
-                  {item.family_name}
-                  {'\n'}
-                  {item.email}
-                </Text>
-                <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.blockUser(item.user_id); }}>
-                    <Text style={styles.buttonText}>Block</Text>
-                  </TouchableOpacity>
-                </View>
+          <View style={{ flex: 1, flexDirection: 'column' }}>
+            <FlatList
+              data={this.state.contactListData}
+              renderItem={({ item }) => (
+                <View style={{ flexDirection: 'row' }}>
+                  <Image
+                    source={{ uri: this.state.photo[item.user_id] }}
+                    style={{ width: 60, height: 60 }}
+                  />
+                  <Text style={{ flex: 1 }}>
+                    {item.given_name}
+                    {' '}
+                    {item.family_name}
+                    {'\n'}
+                    {item.email}
+                  </Text>
+                  <View style={styles.button}>
+                    <TouchableOpacity onPress={() => { this.blockUser(item.user_id); }}>
+                      <Text style={styles.buttonText}>Block</Text>
+                    </TouchableOpacity>
+                  </View>
 
-                <View style={styles.button}>
-                  <TouchableOpacity onPress={() => { this.removeUser(item.user_id); }}>
-                    <Text style={styles.buttonText}>Remove</Text>
-                  </TouchableOpacity>
+                  <View style={styles.button}>
+                    <TouchableOpacity onPress={() => { this.removeUser(item.user_id); }}>
+                      <Text style={styles.buttonText}>Remove</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
+              )}
+            />
+            <View style={{ flexDirection: 'row' }}>
+              <View style={styles.button}>
+                <TouchableOpacity onPress={() => {
+                  this.decreaseValue();
+                }}
+                >
+                  <Text style={styles.buttonText}>Back</Text>
+                </TouchableOpacity>
               </View>
-            )}
-          />
+
+              <View style={styles.button}>
+                <TouchableOpacity onPress={() => {
+                  this.incrementValue();
+                }}
+                >
+                  <Text style={styles.buttonText}>Next</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
           )}
         {!this.state.searchQ
           && (
@@ -157,6 +230,10 @@ export default class Contact extends Component {
             data={this.state.contactListData}
             renderItem={({ item }) => (
               <View style={{ flex: 1, flexDirection: 'row' }}>
+                <Image
+                  source={{ uri: this.state.photo[item.user_id] }}
+                  style={{ width: 60, height: 60 }}
+                />
                 <Text style={{ flex: 1 }}>
                   {item.first_name}
                   {' '}

@@ -186,8 +186,12 @@ export default class Profile extends Component {
             </View>
             <View>
               <Text>
-                First Name:
-                {this.state.profile.first_name}
+                <Text style={{ fontWeight: 'bold' }}>
+                  First Name:
+                </Text>
+                <Text>
+                  {this.state.profile.first_name}
+                </Text>
               </Text>
               <TextInput
                 style={{ height: 40, borderWidth: 1, width: '100%' }}
@@ -199,9 +203,14 @@ export default class Profile extends Component {
 
             <View>
               <Text>
-                Last Name:
-                {this.state.profile.last_name}
+                <Text style={{ fontWeight: 'bold' }}>
+                  Last Name:
+                </Text>
+                <Text>
+                  {this.state.profile.last_name}
+                </Text>
               </Text>
+
               <TextInput
                 style={{ height: 40, borderWidth: 1, width: '100%' }}
                 placeholder="Edit your last name"
@@ -213,8 +222,12 @@ export default class Profile extends Component {
 
             <View style={styles.email}>
               <Text>
-                Email:
-                {this.state.profile.email}
+                <Text style={{ fontWeight: 'bold' }}>
+                  Email:
+                </Text>
+                <Text>
+                  {this.state.profile.email}
+                </Text>
               </Text>
               <TextInput
                 style={{ height: 40, borderWidth: 1, width: '100%' }}
@@ -225,7 +238,7 @@ export default class Profile extends Component {
             </View>
 
             <View style={styles.password}>
-              <Text>Password:</Text>
+              <Text style={{ fontWeight: 'bold' }}>Password:</Text>
               <TextInput
                 style={{ height: 40, borderWidth: 1, width: '100%' }}
                 placeholder="Edit password"
