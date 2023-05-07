@@ -9,7 +9,7 @@ import {
   Modal, ActivityIndicator, Image,
 } from 'react-native';
 
-export default class Contact extends Component {
+export default class Search extends Component {
   constructor(props) {
     super(props);
 
@@ -114,8 +114,7 @@ export default class Contact extends Component {
     })
       .then((response) => {
         if (response.status === 200) {
-          this.setState({ error: 'Person has been blocked', modalError: !this.state.modalError });
-          return response.json();
+          return this.setState({ error: 'Person has been blocked', modalError: !this.state.modalError });
         } if (response.status === 400) {
           return this.setState({ error: 'Can not block yourself', modalError: !this.state.modalError });
         }
@@ -143,7 +142,9 @@ export default class Contact extends Component {
           <TextInput
             style={{ height: 40, borderWidth: 1, width: '100%' }}
             placeholder="search"
-            onSelectionChange={() => { this.searchButton(); this.setState({ offset: 0 }); }}
+            onSelectionChange={() => {
+              this.setState({ offset: 0 });
+            }}
             onChangeText={(search) => this.setState({ search })}
             defaultValue={this.state.search}
           />

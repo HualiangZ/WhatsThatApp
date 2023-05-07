@@ -41,13 +41,16 @@ export default class Profile extends Component {
     this.setState({ error: '' });
 
     if (!EmailValidator.validate(this.state.email) && this.state.email !== '') {
-      this.setState({ error: 'Must enter valid email' });
+      this.setState({ error: 'Must enter valid email', modalError: true });
       return;
     }
 
     const PASSWORD_REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     if (!PASSWORD_REGEX.test(this.state.password) && this.state.password !== '') {
-      this.setState({ error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)" });
+      this.setState({
+        error: "Password isn't strong enough (One upper, one lower, one special, one number, at least 8 characters long)",
+        modalError: true,
+      });
       return;
     }
 
@@ -139,7 +142,7 @@ export default class Profile extends Component {
         if (response.status === 200) {
           return this.getUser();
         } if (response.status === 400) {
-          return this.setState({ error: 'Something went wrong please try again', modalError: !this.state.modalError });
+          return this.setState({ error: 'Email already used', modalError: !this.state.modalError });
         }
         return this.setState({ error: 'Something went wrong please try again', modalError: !this.state.modalError });
       })
@@ -272,10 +275,7 @@ export default class Profile extends Component {
                 </View>
               </TouchableOpacity>
             </View>
-            <Text>
-              {this.state.error
-                                && <Text style={styles.error}>{this.state.error}</Text>}
-            </Text>
+
             {/* Error handling modal */}
             <Modal
               animationType="none"

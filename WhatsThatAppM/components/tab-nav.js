@@ -14,7 +14,7 @@ export default class App extends Component {
   render() {
     return (
       <Tab.Navigator initialRouteName="Chat">
-        <Tab.Screen name="Chat" component={Chat} options={{ unmountOnBlur: true }} />
+        <Tab.Screen name="Chat" component={Chat} />
         <Tab.Screen name="Contact" component={ContactScreen} options={{ unmountOnBlur: true }} />
         <Tab.Screen name="Search" component={SearchScreen} options={{ unmountOnBlur: true }} />
         <Tab.Screen name="Profile" component={ProfileScreen} options={{ unmountOnBlur: true }} />

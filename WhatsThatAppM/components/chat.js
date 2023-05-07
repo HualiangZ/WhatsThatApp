@@ -25,7 +25,7 @@ export default class Chat extends Component {
     this.onPressButton = this.onPressButton.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     // eslint-disable-next-line react/no-unused-class-component-methods
     this.unsubscribe = this.props.navigation.addListener('focus', () => {
       this.getChat();

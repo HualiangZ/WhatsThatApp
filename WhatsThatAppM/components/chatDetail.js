@@ -97,10 +97,10 @@ export default class ChatDetail extends Component {
     })
       .then(async (response) => {
         if (response.status === 200) {
-          this.getMember();
           if (userId === await AsyncStorage.getItem('whatsthat_id')) {
             return this.props.navigation.navigate('Chat');
           }
+          return this.getMember();
         } if (response.status === 400) {
           return this.setState({ error: 'something went wrong' });
         }
@@ -229,7 +229,6 @@ export default class ChatDetail extends Component {
             </View>
           )}
         />
-        <Text>{this.state.error}</Text>
         <Modal
           animationType="none"
           visible={this.state.modalChatVisible}
@@ -243,7 +242,7 @@ export default class ChatDetail extends Component {
               <TextInput
                 style={{ height: 40, borderWidth: 1, width: '100%' }}
                 placeholder="search"
-                onSelectionChange={() => this.searchButton()}
+                onSelectionChange={() => { this.searchButton(); this.setState({ offset: 0 }); }}
                 onChangeText={(search) => this.setState({ search })}
                 defaultValue={this.state.search}
               />
@@ -268,6 +267,7 @@ export default class ChatDetail extends Component {
                         <Text style={styles.buttonText}>Add</Text>
                       </TouchableOpacity>
                     </View>
+                    <Text>{this.state.error}</Text>
                   </View>
                 )}
               />

@@ -4,7 +4,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { Component } from 'react';
 import {
-  Button, View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, ActivityIndicator,
+  Button, View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList,
   Modal, Image,
 } from 'react-native';
 
@@ -147,14 +147,15 @@ export default class Contact extends Component {
     if (this.state.isLoading) {
       return (
         <View>
-          <ActivityIndicator />
           <FlatList
             data={this.state.contactListData}
             renderItem={({ item }) => {
               this.profileImage(item.user_id);
             }}
           />
+          <Text>No contacts</Text>
         </View>
+
       );
     }
     return (
