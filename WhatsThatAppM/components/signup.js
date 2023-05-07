@@ -108,7 +108,7 @@ export default class LoginScreen extends Component {
               defaultValue={this.state.first_name}
             />
             <Text>
-              {this.state.submitted && !this.state.first_name
+              {this.state.submitted && !this.state.firstName
                             && <Text style={styles.error}>*First name is required</Text>}
             </Text>
           </View>
@@ -122,7 +122,7 @@ export default class LoginScreen extends Component {
               defaultValue={this.state.last_name}
             />
             <Text>
-              {this.state.submitted && !this.state.last_name
+              {this.state.submitted && !this.state.lastName
                             && <Text style={styles.error}>*Last name is required</Text>}
             </Text>
           </View>
